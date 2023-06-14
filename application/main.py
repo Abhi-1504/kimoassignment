@@ -28,6 +28,7 @@ async def get_chapter_overview(chapter_name: str):
 
 @app.post("/chapter_rating", description="Endpoint for rating a chapter")
 async def rate_chapter(rating_request: ChapterRatingRequest):
+    return rating_request
     return mongo_db_conn.post_chapter_rating(
         rating_request.user_id, rating_request.chapter_name, rating_request.rating
     )

@@ -56,7 +56,7 @@ class MongoDbConn:
                 if user_rating["rated"].lower() == "negative"
                 else 0
                 for chapter_ratings in chapters_ratings
-                for user_rating in chapter_ratings
+                for user_rating in chapter_ratings["ratings"]
             ]
         )
         return self.courses_collection.update_one(
@@ -131,7 +131,6 @@ class MongoDbConn:
         chapter_doc = self.get_chapter_doc(query)
         query = {"_id": chapter_doc["course_id"]}, {"_id": True}
         course_doc = self.get_course_doc(query)
-
         for user_rating in chapter_doc["ratings"]:
             if user_id == user_rating["user_id"]:
                 user_rating["rated"] = rating
