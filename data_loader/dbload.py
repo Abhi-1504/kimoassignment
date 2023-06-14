@@ -3,7 +3,7 @@ import json
 from datetime import datetime
 
 # Creating client to connect to MongoDB
-client =pymongo.MongoClient("localhost", 27017)
+client = pymongo.MongoClient("localhost", 27017)
 
 # Creating kimodb database
 db = client.kimodb
@@ -28,16 +28,19 @@ for course in courses_data:
     course_id = db.courses.insert_one(course).inserted_id
 
     # creating documents for all the chapters for all the courses
-    chapters_collection = [{**chapters_document, "course_id": course_id}   for chapters_document in chapters_collection]
+    chapters_collection = [
+        {**chapters_document, "course_id": course_id, "ratings": []}
+        for chapters_document in chapters_collection
+    ]
 
     # inserting all the chapters to mongodb collection in bulk
     db.chapters.insert_many(chapters_collection)
 
-    # retriving chapters name and inserted id from collection 
-    chapters = db.chapters.find({"course_id" : course_id}, {"name":True})
+    # retriving chapters name and inserted id from collection
+    chapters = db.chapters.find({"course_id": course_id}, {"_id": True})
 
     # embedding the chapters document data into courses collection's documents
-    db.courses.update_one({"_id": course_id}, {"$set": {"chapters" : list(chapters)}})
-
-
-
+    db.courses.update_one(
+        {"_id": course_id},
+        {"$set": {"chapter_ids": [chapter["_id"] for chapter in chapters]}},
+    )
