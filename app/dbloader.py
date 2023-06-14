@@ -3,7 +3,7 @@ from configparser import ConfigParser
 from typing import List, Dict, Optional, Tuple, Union
 
 config = ConfigParser()
-config.read("config.ini")
+config.read("config.conf")
 HOST = config.get("DATABASE", "Host")
 Port = int(config.get("DATABASE", "Port"))
 
@@ -89,23 +89,6 @@ class MongoDbConn:
         self.chapters_collection.update_one({"_id" : chapter_doc["_id"]}, {"$set": {"ratings" : chapter_doc["ratings"]}})
 
         self.update_course_ratings(course_doc, chapter_doc["ratings"])
-
-
-if __name__ == "__main__":
-    mongo_db_conn = MongoDbConn()
-    import json
-    """
-    all_courses = mongo_db_conn.get_all_courses("name")#domain = "artificial intelligence")
-    for course in all_courses:
-        print(course["name"])
-    print(json.dumps(mongo_db_conn.get_course_overview(course_name = "Introduction to Deep Learning"), indent=4))
-    chapter_info = mongo_db_conn.get_chapter_information(chapter_name="Learning+Reasoning")
-    print(json.dumps(chapter_info, indent = 4))
-    """
-    mongo_db_conn.post_chapter_rating(chapter_name="Learning+Reasoning", user_id="user1", rating="POSITIVE")
-    chapter_info = mongo_db_conn.get_chapter_information(chapter_name="Learning+Reasoning")
-    print(json.dumps(chapter_info, indent = 4))
-    print(json.dumps(mongo_db_conn.get_course_overview(course_name = "Introduction to Deep Learning"), indent=4))
 
 
 
